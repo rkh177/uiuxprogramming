@@ -99,23 +99,33 @@
       </section>
 
       <section id="subscribe" class="content-section subscribe-section">
-        <h2>소식 받기</h2>
+        <h2>Vibe 소식 받기</h2>
 
-        <form class="subscribe-form">
-          <label class="email-field" for="email">이메일</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            placeholder="사내 이메일 입력 (name@company.com)"
-          />
-          <button  class="primary-button" type="submit">모델 업데이트 소식 받기</button>
+        <form id="subscribe-form">
+          <div class="email-field">
+            <label for="email">이메일</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="사내 이메일 입력 (name@company.com)"
+            />
+          </div>
+          <button class="primary-button" type="submit" id="subscribeButton">소식 받기</button>
         </form>
+                  <p id="subscribeMessage">알림 설정을 저장해 주세요.</p>
       </section>
+
     </main>
 
     <footer class="site-footer">
       <p>© 2026 사내 Local AI 코딩 어시스턴트</p>
     </footer>
+
+    <script src="script.js">
+      console.log("JavaScript가 연결되었습니다.");
+    </script> 
+
+
   </body>
 </html>
