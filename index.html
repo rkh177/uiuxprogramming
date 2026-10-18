@@ -56,30 +56,50 @@
       <section id="features" class="content-section">
         <h2>주요 기능</h2>
 
-        <ul class="features-list">
-          <li class="feature-card">
-            <h3>사내 코드베이스 학습</h3>
-            <p>
-              사내 저장소 소스코드를 학습하여 회사 도메인과 비즈니스 로직에
-              최적화된 답변을 제공합니다.
-            </p>
-          </li>
-          <li class="feature-card">
-            <h3>폐쇄망 보안 환경 보장</h3>
-            <p>
-              외부 API 호출 없이 사내 온프레미스 인프라에서만 추론하여 기술
-              유출을 완벽히 방지합니다.
-            </p>
-          </li>
-          <li class="feature-card">
-            <h3>사내 표준 바이브 코딩</h3>
-            <p>
-              사내 코딩 컨벤션과 아키텍처 가이드라인을 준수하며 자연어 대화
-              기반의 고속 코딩을 지원합니다.
-            </p>
-          </li>
-        </ul>
+        <div class="tabs" role="tablist" aria-label="서비스 주요 기능 선택">
+          <button id="tab-intro" class="tab is-active" type="button"
+            role="tab" aria-selected="true"
+            aria-controls="panel-intro" data-target="#panel-intro">
+            사내 코드 베이스 학습
+          </button>
+
+          <button id="tab-guide" class="tab" type="button"
+            role="tab" aria-selected="false"
+            aria-controls="panel-guide" data-target="#panel-guide">
+            폐쇄망 보안 환경 보장
+          </button>
+
+          <button id="tab-question" class="tab" type="button"
+            role="tab" aria-selected="false"
+            aria-controls="panel-question" data-target="#panel-question">
+            사내 표준 바이브 코딩
+          </button>
+
+        </div>
+
+
+        <div id="panel-intro" class="panel is-active" role="tabpanel"
+          aria-labelledby="tab-intro">
+          <h3>사내 코드 베이스 학습</h3>
+          <p>사내 저장소 소스코드를 학습하여 회사 도메인과 비즈니스 로직에 최적화된 답변을 제공합니다.</p>
+        </div>
+
+        <div id="panel-guide" class="panel" role="tabpanel"
+          aria-labelledby="tab-guide" hidden>
+          <h3>폐쇄망 보안 환경 보장</h3>
+          <p>외부 API 호출 없이 사내 온프레미스 인프라에서만 추론하여 기술
+              유출을 완벽히 방지합니다.</p>
+        </div>
+
+        <div id="panel-question" class="panel" role="tabpanel"
+          aria-labelledby="tab-question" hidden>
+          <h3>사내 표준 바이브 코딩</h3>
+          <p>사내 코딩 컨벤션과 아키텍처 가이드라인을 준수하며 자연어 대화
+              기반의 고속 코딩을 지원합니다.</p>
+        </div>   
       </section>
+
+
 
       <section id="steps" class="content-section">
         <h2>이용 방법</h2>
@@ -97,6 +117,51 @@
           </li>
         </ol>
       </section>
+
+      <section id="interaction-practice" class="settings-panel">
+        <h2>서비스 이용 설정</h2>
+
+        <div class="interaction-grid">
+
+          <div class="interaction-item">
+            <h3>화면 테마</h3>
+            <button id="themeButton" type="button">
+              어두운 테마로 바꾸기
+            </button>
+          </div>
+
+          <div class="interaction-item">
+            <label for="userName">사용자 이름</label>
+            <input
+              id="userName"
+              type="text"
+              maxlength="10"
+              placeholder="10자 이내로 입력"
+            >
+            <p id="userNameCount" aria-live="polite">0 / 10</p>
+          </div>
+
+          <div class="interaction-item">
+            <h3>데이터 수집 동의</h3>
+            <label class="agree-row" for="agreeCheck">
+              <input id="agreeCheck" type="checkbox">
+              입력된 데이터는 LLM 학습에 활용 될 수 있음에 동의 합니다.
+            </label>
+
+            <p id="agreeMessage" aria-live="polite">
+              안내 확인 후 서비스를 시작할 수 있습니다.
+            </p>
+
+            <button id="startButton" type="button" disabled>
+              서비스 시작하기
+            </button>
+          </div>
+          
+        </div>
+
+
+      </section>
+
 
       <section id="subscribe" class="content-section subscribe-section">
         <h2>Vibe 소식 받기</h2>
