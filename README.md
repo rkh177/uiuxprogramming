@@ -1,15 +1,23 @@
-# 5주차 JavaScript 인터렉션 추가
+# 6주차 JavaScript 인터렉션 추가
 
-## User
-사용자는 바이브 코딩과 관련한 안내를 받기 위한 이메일을 등록하고 신청합니다.
+## 구현한 이벤트
 
-## 안내문구
-신청 한 후 아래와 같은 안내 문구를 subscribeMessage에 출력합니다.
-"[이메일] + 로 신청이 완료되었습니다. 바이브 코딩 안내를 메일로 받을 수 있습니다."
+1.  button click 이벤트 - 다크/라이트 테마 전환
+2.  input 변화 - 사용자 이름 실시간 카운팅
+3.  checkbox change - 체크 박스 상태 변화
+4.  tab click - 탭 클릭으로 패널 전환
 
-## 상태 클래스
-subscribeMessage에 is-success 클래스를 추가하여 글자 및 배경 색상 등을 변경합니다.
+## 화면 변화
 
-## 코드 설명
-subscribedForm.addEventListener("submit", handleSubscibe);
-subscribedForm의 submit 이벤트 발생 시 handleSubscibe 함수를 호출합니다.
+1.  테마 버튼 클릭 시 body 에 dark 클래스 토클
+2.  이름 입력 시 글자수 실시간 표시
+3.  체크 박스 startbutton 활성화, argeemessage 테스트 및 is-ready 클래스 변경
+4.  이메일 신청 완료시 버튼 비활성화 및 테스트 "신청완료", 안내 메시지
+5.  탭 클릭시 해당 탭에 is-active 클랙스 적용
+
+## 테스트 결과
+
+1.  테마 반복 전환 시 텍스트/스타일 정상 토글 확인
+2.  이름 10자 초과 입력 불가 및 카운터 정확히 표시 확인
+3.  체크박스 체크/해제 시 시작 버튼 활성화/비활성화 확인
+4.  탭 전환 시 이전 패널 숨김, 새 패널 표시 확인
