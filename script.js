@@ -305,5 +305,11 @@ restartButton.addEventListener("click", () => {
   summaryTitle.textContent = "";
   summaryDuration.textContent = "";
   summaryQna.textContent = "";
+  selectedRating = 0;
+  updateStars(0);
+  ratingComment.value = "";
+  ratingResult.hidden = true;
+  ratingResultStars.textContent = "";
+  ratingResultComment.textContent = "";
   showStep(0);
 });
