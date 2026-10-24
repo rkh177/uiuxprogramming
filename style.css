@@ -461,7 +461,8 @@ body.dark #rating-dialog {
   color: #635bff;
   font-weight: 800;
 }
-.review-flow .error-message {
+.review-flow .error-message,
+#rating-dialog .error-message {
   min-height: 24px;
   color: #9d243d;
   font-weight: 700;
