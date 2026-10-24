@@ -221,10 +221,38 @@
         <section class="step complete-step" data-step="4" hidden>
           <h3>코드 리뷰 요청이 완료되었습니다.</h3>
           <p>선정한 내용을 확인했습니다. 필요하면 다시 설정할 수 있습니다.</p>
-          <button id="restart-button" type="button">다시 설정하기</button>
+          <div class="step-actions">
+            <button id="restart-button" type="button">다시 설정하기</button>
+            <button id="rating-open-button" type="button">리뷰 평가하기</button>
+          </div>
+
+          <div id="rating-result" class="rating-result" hidden>
+            <h4>등록된 평가</h4>
+            <p id="rating-result-stars" class="rating-result-stars"></p>
+            <p id="rating-result-comment"></p>
+            <button id="rating-edit-button" type="button">평가 수정하기</button>
+          </div>
         </section>
 
       </section>
+
+      <dialog id="rating-dialog" aria-labelledby="rating-dialog-title">
+        <h2 id="rating-dialog-title">리뷰 평가 등록</h2>
+        <div class="star-rating" role="group" aria-label="별점 선택">
+          <button class="star" type="button" data-value="1" aria-label="별점 1점">★</button>
+          <button class="star" type="button" data-value="2" aria-label="별점 2점">★</button>
+          <button class="star" type="button" data-value="3" aria-label="별점 3점">★</button>
+          <button class="star" type="button" data-value="4" aria-label="별점 4점">★</button>
+          <button class="star" type="button" data-value="5" aria-label="별점 5점">★</button>
+        </div>
+        <p id="rating-error" class="error-message" aria-live="polite"></p>
+        <label for="rating-comment">평가 내용</label>
+        <textarea id="rating-comment" rows="3" placeholder="리뷰 경험을 간단히 적어주세요"></textarea>
+        <div class="dialog-action">
+          <button id="rating-cancel" type="button">취소</button>
+          <button id="rating-submit" type="button">평가 등록하기</button>
+        </div>
+      </dialog>
 
 
 

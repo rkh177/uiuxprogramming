@@ -369,7 +369,8 @@ body.dark .event-card {
   display: none;
 }
 
-#review-dialog {
+#review-dialog,
+#rating-dialog {
   width: min(520px, calc(100% - 32px));
   max-width: none;
   padding: 24px;
@@ -379,21 +380,28 @@ body.dark .event-card {
   color: #27232c;
 }
 
-#review-dialog::backdrop {
+#review-dialog::backdrop,
+#rating-dialog::backdrop {
   background: rgba(30, 20, 39, 0.6);
 }
-#review-dialog .dialog-actions {
+
+.dialog-action {
   display: flex;
   gap: 12px;
   justify-content: flex-end;
   margin-top: 20px;
 }
-#review-dialog button {
+
+#review-dialog button,
+#rating-dialog button:not(.star) {
   min-height: 44px;
 }
-body.dark #review-dialog {
+
+body.dark #review-dialog,
+body.dark #rating-dialog {
   background: #50515f;
   color: #fff;
+  border-color: #2d2e38;
 }
 
 .review-flow {
@@ -405,8 +413,43 @@ body.dark #review-dialog {
 
 .review-flow[hidden],
 .review-flow .step[hidden],
-.review-flow fieldset[hidden] {
+.review-flow fieldset[hidden],
+.rating-result[hidden] {
   display: none;
+}
+
+.review-flow .step label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+
+.review-flow fieldset label {
+  display: inline;
+  margin-bottom: 0;
+  font-weight: normal;
+}
+
+.review-flow .step input[type="text"],
+.review-flow .step textarea {
+  width: 100%;
+}
+
+.review-flow fieldset {
+  margin: 12px 0 0;
+  padding: 12px 16px;
+  border: 1px solid #deddea;
+  border-radius: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+
+.review-flow output {
+  display: inline-block;
+  margin-top: 6px;
+  font-weight: 700;
+  color: #635bff;
 }
 
 .review-flow .progress {
@@ -455,6 +498,74 @@ body.dark #review-dialog {
 body.dark .review-flow {
   background-color: #50515f;
   border-color: #2d2e38;
+}
+
+textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #bfc1d1;
+  border-radius: 8px;
+  font: inherit;
+  resize: vertical;
+}
+
+textarea:focus {
+  border-color: #5b50c8;
+  outline: 3px solid #d9d6ff;
+  outline-offset: 2px;
+}
+
+#rating-dialog label {
+  display: block;
+  margin: 12px 0 6px;
+  font-weight: 700;
+}
+
+.star-rating {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0 4px;
+}
+.star {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #ccc;
+  cursor: pointer;
+  padding: 0;
+  min-height: 44px;
+  line-height: 1;
+}
+.star:hover,
+.star.is-active {
+  background: none;
+  color: #f5a623;
+}
+
+.rating-result {
+  margin-top: 20px;
+  padding: 16px;
+  border: 1px solid #deddea;
+  border-radius: 11px;
+  background-color: #f9f9ff;
+}
+.rating-result h4 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  color: #747786;
+  font-weight: 700;
+}
+.rating-result-stars {
+  font-size: 1.5rem;
+  color: #f5a623;
+  margin-bottom: 4px;
+}
+.rating-result p:last-of-type {
+  margin-bottom: 12px;
+}
+body.dark .rating-result {
+  background-color: #2d2e38;
+  border-color: #50515f;
 }
 
 @media (max-width: 768px) {
@@ -552,5 +663,14 @@ body.dark .review-flow {
   .review-flow input[type="checkbox"],
   .review-flow input[type="radio"] {
     width: auto;
+  }
+  .dialog-action {
+    flex-direction: column-reverse;
+  }
+  .dialog-action button {
+    width: 100%;
+  }
+  .star-rating {
+    gap: 4px;
   }
 }

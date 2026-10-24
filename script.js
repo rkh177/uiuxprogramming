@@ -230,6 +230,65 @@ finishButton.addEventListener("click", () => {
   showStep(3);
 });
 
+const ratingOpenButton = document.querySelector("#rating-open-button");
+const ratingDialog = document.querySelector("#rating-dialog");
+const ratingCancel = document.querySelector("#rating-cancel");
+const ratingSubmit = document.querySelector("#rating-submit");
+const ratingEditButton = document.querySelector("#rating-edit-button");
+const ratingResult = document.querySelector("#rating-result");
+const ratingResultStars = document.querySelector("#rating-result-stars");
+const ratingResultComment = document.querySelector("#rating-result-comment");
+const ratingError = document.querySelector("#rating-error");
+const ratingComment = document.querySelector("#rating-comment");
+const stars = document.querySelectorAll(".star");
+
+let selectedRating = 0;
+
+function updateStars(value) {
+  stars.forEach((star, i) => {
+    star.classList.toggle("is-active", i < value);
+  });
+  selectedRating = value;
+}
+
+stars.forEach((star) => {
+  star.addEventListener("click", () => {
+    updateStars(Number(star.dataset.value));
+    ratingError.textContent = "";
+  });
+});
+
+function openRatingDialog() {
+  ratingError.textContent = "";
+  ratingDialog.showModal();
+}
+
+ratingOpenButton.addEventListener("click", openRatingDialog);
+ratingEditButton.addEventListener("click", openRatingDialog);
+
+ratingCancel.addEventListener("click", () => {
+  ratingDialog.close();
+});
+
+ratingSubmit.addEventListener("click", () => {
+  const comment = ratingComment.value.trim();
+
+  if (selectedRating === 0) {
+    ratingError.textContent = "별점을 선택해 주세요.";
+    return;
+  }
+  if (!comment) {
+    ratingError.textContent = "평가 내용을 입력해 주세요.";
+    ratingComment.focus();
+    return;
+  }
+
+  ratingResultStars.textContent = "★".repeat(selectedRating) + "☆".repeat(5 - selectedRating);
+  ratingResultComment.textContent = comment;
+  ratingResult.hidden = false;
+  ratingDialog.close();
+});
+
 restartButton.addEventListener("click", () => {
   formData.repoName = "";
   formData.commitCount = "3";
