@@ -12,10 +12,13 @@
   </head>
   <body>
     <!--
+    9주차 · 폼 UI와 입력 경험 설계
     사용자: 소스코드 유출 없이 사내 표준에 맞게 AI 코딩을 활용하려는 사내 개발자
     목적: 사내 폐쇄망 기반 Qwen 로컬 LLM의 특징을 이해하고 AI 코드 리뷰를 요청한다.
     핵심 행동: 서비스 소개를 확인하고, 데이터 수집에 동의한 뒤 AI 코드 리뷰 조건을 설정한다.
     정보 순서: 서비스 소개 → 주요 기능 → 이용 방법 → AI 코드 리뷰 요청 설정 → 소식 받기
+    9주차 변경: AI 코드 리뷰 요청 폼에 label·input 연결, 입력 상태(is-valid/has-error), 글자 수 카운터,
+               조건부 입력(qna-option), submit 통합, 저장 중·완료·실패 피드백 추가
      -->
 
     <header class="site-header">
@@ -179,61 +182,99 @@
           <span class="progress_item">3.확인</span>
         </p>
 
-        <section class="step" data-step="1" hidden>
-          <h3>리포지토리/파일명을 입력해 주세요</h3>
-          <label for="repo-name">파일명</label>
-          <input id="repo-name" type="text" placeholder="예: src/components/Button.tsx" aria-describedby="title-error">
-          <p id="title-error" class="error-message" aria-live="polite"></p>
-          <button id="title-next" type="button">리뷰 조건 선택하기</button>
-        </section>
+        <form id="review-form" novalidate aria-busy="false">
 
-        <section class="step" data-step="2" hidden>
-          <h3>리뷰 조건을 선택해 주세요</h3>
-          <label for="duration-range">리뷰 커밋 범위</label>
-          <input id="duration-range" type="range" min="0" max="2" step="1" value="1">
-          <output id="duration-value" for="duration-range">3커밋</output>
-          <label><input type="checkbox" id="qna-option">중점 항목 포함</label>
-          <fieldset id="qna-options" hidden>
-            <legend>중점 검토 항목 수</legend>
-            <label><input type="radio" name="qna-count" value="1">1개</label>
-            <label><input type="radio" name="qna-count" value="2" checked>2개</label>
-            <label><input type="radio" name="qna-count" value="3">3개</label>
-          </fieldset>
-          <div class="step-actions">
-            <button id="option-prev" type="button">이전</button>
-            <button id="option-next" type="button">내용 확인하기</button>
-          </div>
-        </section>
+          <section class="step" data-step="1" hidden>
+            <h3>리포지토리/파일명을 입력해 주세요</h3>
+            <div class="field" id="repo-field">
+              <label for="repo-name">파일명 <span class="required">필수</span></label>
+              <input
+                id="repo-name"
+                name="repoName"
+                type="text"
+                minlength="1"
+                maxlength="100"
+                required
+                placeholder="예: src/components/Button.tsx"
+                aria-describedby="repo-help repo-count repo-error"
+              >
+              <div class="field-meta">
+                <p id="repo-help">리뷰할 파일 경로를 입력해 주세요.</p>
+                <p id="repo-count" aria-live="polite">0 / 100자</p>
+              </div>
+              <p id="repo-error" class="field-error" role="alert"></p>
+            </div>
+            <div class="step-actions step-actions-end">
+              <button id="title-next" type="button">리뷰 조건 선택하기 →</button>
+            </div>
+          </section>
 
-        <section class="step" data-step="3" hidden>
-          <h3>입력한 내용을 확인해 주세요.</h3>
-          <div class="summary-list">
-            <div><span>파일명</span><strong id="summary-title"></strong></div>
-            <div><span>커밋 범위</span><strong id="summary-duration"></strong></div>
-            <div><span>중점 항목</span><strong id="summary-qna"></strong></div>
-          </div>
-          <div class="step-actions">
+          <section class="step" data-step="2" hidden>
+            <h3>리뷰 조건을 선택해 주세요</h3>
+            <label for="duration-range">리뷰 커밋 범위</label>
+            <input id="duration-range" type="range" min="0" max="2" step="1" value="1">
+            <output id="duration-value" for="duration-range">3커밋</output>
+            <div class="field qna-field">
+              <label class="check-row" for="qna-option">
+                <input
+                  id="qna-option"
+                  name="qna"
+                  type="checkbox"
+                  value="included"
+                  aria-controls="qna-options"
+                  aria-expanded="false"
+                >
+                <span>
+                  <strong>중점 항목 포함</strong>
+                  <small>리뷰에서 집중 검토할 항목 수를 정할 수 있습니다.</small>
+                </span>
+              </label>
+              <fieldset id="qna-options" class="qna-options" hidden>
+                <legend>중점 검토 항목 수</legend>
+                <div class="inline-options">
+                  <label><input type="radio" name="qna-count" value="1" disabled> 1개</label>
+                  <label><input type="radio" name="qna-count" value="2" checked disabled> 2개</label>
+                  <label><input type="radio" name="qna-count" value="3" disabled> 3개</label>
+                </div>
+              </fieldset>
+            </div>
+            <div class="step-actions">
+              <button id="option-prev" type="button">이전</button>
+              <button id="option-next" type="button">내용 확인하기 →</button>
+            </div>
+          </section>
+
+          <section class="step" data-step="3" hidden>
+            <h3>입력한 내용을 확인해 주세요.</h3>
+            <div class="summary-list">
+              <div><span>파일명</span><strong id="summary-title"></strong></div>
+              <div><span>커밋 범위</span><strong id="summary-duration"></strong></div>
+              <div><span>중점 항목</span><strong id="summary-qna"></strong></div>
+            </div>
+            <p id="submit-status" role="status" aria-live="polite"></p>
+            <div class="step-actions">
               <button id="summary-prev" type="button">수정하기</button>
-              <button id="finish-button" type="button">설정 완료하기</button>
-          </div>
-        </section>
+              <button id="finish-button" type="submit">설정 완료하기 →</button>
+            </div>
+          </section>
 
-        <section class="step complete-step" data-step="4" hidden>
-          <h3>코드 리뷰 요청이 완료되었습니다.</h3>
-          <p>선정한 내용을 확인했습니다. 필요하면 다시 설정할 수 있습니다.</p>
-          <div class="step-actions">
-            <button id="restart-button" type="button">다시 설정하기</button>
-            <button id="rating-open-button" type="button">리뷰 평가하기</button>
-          </div>
+          <section class="step complete-step" data-step="4" hidden>
+            <h3>코드 리뷰 요청이 완료되었습니다.</h3>
+            <p id="complete-message">설정한 내용을 확인했습니다. 필요하면 다시 설정할 수 있습니다.</p>
+            <div class="step-actions">
+              <button id="restart-button" type="button">다시 설정하기</button>
+              <button id="rating-open-button" type="button">리뷰 평가하기</button>
+            </div>
 
-          <div id="rating-result" class="rating-result" hidden>
-            <h4>등록된 평가</h4>
-            <p id="rating-result-stars" class="rating-result-stars"></p>
-            <p id="rating-result-comment"></p>
-            <button id="rating-edit-button" type="button">평가 수정하기</button>
-          </div>
-        </section>
+            <div id="rating-result" class="rating-result" hidden>
+              <h4>등록된 평가</h4>
+              <p id="rating-result-stars" class="rating-result-stars"></p>
+              <p id="rating-result-comment"></p>
+              <button id="rating-edit-button" type="button">평가 수정하기</button>
+            </div>
+          </section>
 
+        </form>
       </section>
 
       <dialog id="rating-dialog" aria-labelledby="rating-dialog-title">

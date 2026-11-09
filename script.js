@@ -119,13 +119,20 @@ tabs.forEach(function (tab) {
 const reviewFlow = document.querySelector("#review-flow");
 const flowSteps = reviewFlow.querySelectorAll(".step");
 const progressItems = reviewFlow.querySelectorAll(".progress_item");
+const reviewForm = document.querySelector("#review-form");
 const repoInput = document.querySelector("#repo-name");
-const repoError = document.querySelector("#title-error");
+const repoField = document.querySelector("#repo-field");
+const repoHelp = document.querySelector("#repo-help");
+const repoCount = document.querySelector("#repo-count");
+const repoError = document.querySelector("#repo-error");
 const repoNext = document.querySelector("#title-next");
 const durationRange = document.querySelector("#duration-range");
 const durationValue = document.querySelector("#duration-value");
 const qnaOption = document.querySelector("#qna-option");
 const qnaOptions = document.querySelector("#qna-options");
+const qnaCountInputs = [...document.querySelectorAll('input[name="qna-count"]')];
+const submitStatus = document.querySelector("#submit-status");
+const forceSaveFailure = new URLSearchParams(location.search).has("save-error");
 const optionPrev = document.querySelector("#option-prev");
 const optionNext = document.querySelector("#option-next");
 const summaryPrev = document.querySelector("#summary-prev");
@@ -143,13 +150,21 @@ const formData = {
   focusCount: 2,
 };
 
+let currentReviewStep = 0;
+
 function showStep(index) {
+  currentReviewStep = index;
   flowSteps.forEach((step, i) => {
     step.hidden = i !== index;
   });
   progressItems.forEach((item, i) => {
     item.classList.toggle("is-active", i === index);
   });
+  const heading = flowSteps[index]?.querySelector("h3");
+  if (heading) {
+    heading.tabIndex = -1;
+    heading.focus({ preventScroll: true });
+  }
 }
 
 const reviewDialog = document.querySelector("#review-dialog");
@@ -181,32 +196,72 @@ reviewConfirm.addEventListener("click", () => {
   repoInput.focus();
 });
 
+function updateRepoExperience() {
+  const length = repoInput.value.length;
+  const enough = repoInput.value.trim().length >= 1;
+  const invalid = repoInput.getAttribute("aria-invalid") === "true";
+
+  repoCount.textContent = `${length} / 100자`;
+  repoField.classList.toggle("is-valid", enough && !invalid);
+
+  if (!invalid) {
+    repoHelp.textContent = enough
+      ? "입력 조건을 충족했습니다."
+      : "리뷰할 파일 경로를 입력해 주세요.";
+  }
+}
+
+function showRepoError(message) {
+  repoInput.setAttribute("aria-invalid", "true");
+  repoError.textContent = message;
+  repoField.classList.remove("is-valid");
+  repoField.classList.add("has-error");
+  return false;
+}
+
+function clearRepoError() {
+  repoInput.removeAttribute("aria-invalid");
+  repoError.textContent = "";
+  repoField.classList.remove("has-error");
+  updateRepoExperience();
+}
+
 function validateRepo() {
   const value = repoInput.value.trim();
   if (!value) {
-    repoError.textContent = "파일명을 입력해 주세요.";
-    repoInput.classList.add("has-error");
-    repoInput.focus();
-    return false;
+    return showRepoError("파일명을 입력해 주세요.");
   }
-  repoError.textContent = "";
-  repoInput.classList.remove("has-error");
+  clearRepoError();
   formData.repoName = value;
   return true;
 }
 
+repoInput.addEventListener("input", () => {
+  updateRepoExperience();
+  if (repoInput.getAttribute("aria-invalid") === "true") {
+    validateRepo();
+  }
+});
+
 repoNext.addEventListener("click", () => {
-  if (!validateRepo()) return;
-  showStep(1);
+  if (validateRepo()) showStep(1);
 });
 
 durationRange.addEventListener("input", () => {
   durationValue.textContent = durationValues[durationRange.value] + "커밋";
 });
 
-qnaOption.addEventListener("change", () => {
-  qnaOptions.hidden = !qnaOption.checked;
-});
+function syncQnaFields() {
+  const open = qnaOption.checked;
+  qnaOption.setAttribute("aria-expanded", String(open));
+  qnaOptions.hidden = !open;
+  qnaCountInputs.forEach(input => {
+    input.disabled = !open;
+  });
+}
+
+qnaOption.addEventListener("change", syncQnaFields);
+syncQnaFields();
 
 optionPrev.addEventListener("click", () => showStep(0));
 optionNext.addEventListener("click", () => {
@@ -226,8 +281,52 @@ summaryPrev.addEventListener("click", () => {
   showStep(1);
 });
 
-finishButton.addEventListener("click", () => {
-  showStep(3);
+function setSubmitState(loading, message) {
+  reviewForm.setAttribute("aria-busy", String(loading));
+  finishButton.disabled = loading;
+  finishButton.textContent = loading ? "저장하는 중…" : "설정 완료하기 →";
+  submitStatus.textContent = message;
+}
+
+function wait(ms) {
+  return new Promise(resolve => window.setTimeout(resolve, ms));
+}
+
+reviewForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  // 1단계에서 Enter → 다음 단계로
+  if (currentReviewStep === 0) {
+    if (validateRepo()) showStep(1);
+    return;
+  }
+
+  // 3단계에서만 최종 저장
+  if (currentReviewStep !== 2) return;
+
+  if (!validateRepo()) {
+    showStep(0);
+    window.requestAnimationFrame(() => {
+      reviewForm.querySelector('[aria-invalid="true"]')?.focus();
+    });
+    return;
+  }
+
+  setSubmitState(true, "리뷰 요청을 저장하고 있습니다.");
+
+  try {
+    await wait(600);
+    if (forceSaveFailure) {
+      throw new Error("수업용 저장 실패");
+    }
+    const repoName = repoInput.value.trim();
+    document.querySelector("#complete-message").textContent =
+      `'${repoName}' 파일의 리뷰 요청을 저장했습니다. 필요하면 다시 설정할 수 있습니다.`;
+    setSubmitState(false, "리뷰 요청이 저장되었습니다.");
+    showStep(3);
+  } catch {
+    setSubmitState(false, "저장하지 못했습니다. 입력한 내용은 그대로 두었습니다. 다시 시도해 주세요.");
+  }
 });
 
 const ratingOpenButton = document.querySelector("#rating-open-button");
@@ -295,16 +394,20 @@ restartButton.addEventListener("click", () => {
   formData.hasFocus = false;
   formData.focusCount = "2";
   repoInput.value = "";
+  repoCount.textContent = "0 / 100자";
+  repoHelp.textContent = "리뷰할 파일 경로를 입력해 주세요.";
   repoError.textContent = "";
-  repoInput.classList.remove("has-error");
+  repoInput.removeAttribute("aria-invalid");
+  repoField.classList.remove("is-valid", "has-error");
   durationRange.value = "1";
   durationValue.textContent = "3커밋";
   qnaOption.checked = false;
-  qnaOptions.hidden = true;
+  syncQnaFields();
   document.querySelector('input[name="qna-count"][value="2"]').checked = true;
   summaryTitle.textContent = "";
   summaryDuration.textContent = "";
   summaryQna.textContent = "";
+  setSubmitState(false, "");
   selectedRating = 0;
   updateStars(0);
   ratingComment.value = "";
@@ -312,4 +415,5 @@ restartButton.addEventListener("click", () => {
   ratingResultStars.textContent = "";
   ratingResultComment.textContent = "";
   showStep(0);
+  repoInput.focus();
 });

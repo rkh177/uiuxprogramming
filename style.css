@@ -232,7 +232,7 @@ button:active {
 
 .event-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 24px;
 }
 
@@ -468,8 +468,126 @@ body.dark #rating-dialog {
   font-weight: 700;
 }
 
-.review-flow #repo-name.has-error {
+/* 유닛 02 · 필드 메타 (안내 + 글자 수) */
+.field-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 5px;
+}
+
+.field-meta p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted, #5e6272);
+}
+
+#repo-count {
+  flex: none;
+}
+
+/* 유닛 02 · 오류 영역 최소 높이 확보 (레이아웃 흔들림 방지) */
+.field-error {
+  min-height: 24px;
+  margin: 6px 0 0;
+  color: #9d243d;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* 유닛 02 · 입력 상태 클래스 */
+.field.is-valid input[type="text"] {
+  border-color: #16805d;
+}
+
+.field.is-valid #repo-help {
+  color: #16805d;
+}
+
+.field.has-error input[type="text"] {
   border-color: #9d243d;
+}
+
+/* 유닛 01 · 필수 표시 */
+.required {
+  margin-left: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #5b50c8;
+}
+
+/* 유닛 01 · qna 조건부 영역 */
+.qna-field {
+  margin-top: 16px;
+}
+
+.check-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  cursor: pointer;
+}
+
+.check-row input[type="checkbox"] {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-top: 3px;
+  accent-color: #5b50c8;
+}
+
+.check-row span {
+  display: flex;
+  flex-direction: column;
+}
+
+.check-row strong {
+  color: #292a31;
+}
+
+.check-row small {
+  color: #5e6272;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.qna-options {
+  margin: 12px 0 0 28px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: #f4f3ff;
+}
+
+.inline-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.inline-options label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-weight: normal;
+  margin-bottom: 0;
+}
+
+/* 유닛 03 · submit-status */
+#submit-status {
+  min-height: 24px;
+  margin: 12px 0 0;
+  color: #5b50c8;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* step-actions-end */
+.step-actions-end {
+  justify-content: flex-end;
 }
 .review-flow #duration-range {
   width: 100%;
@@ -625,6 +743,10 @@ body.dark .rating-result {
 
   #event-practice {
     margin-top: 40px;
+  }
+
+  .event-grid {
+    grid-template-columns: 1fr;
   }
 
   .event-card {
