@@ -388,6 +388,91 @@ ratingSubmit.addEventListener("click", () => {
   ratingDialog.close();
 });
 
+const navLinks = document.querySelectorAll(".main-nav a");
+const menuToggle = document.querySelector("#menu-toggle");
+const mainNav = document.querySelector("#main-nav");
+
+function updateCurrentNav() {
+  const currentHash = window.location.hash;
+  navLinks.forEach((link) => {
+    const current = currentHash
+      ? link.getAttribute("href") === currentHash
+      : link === navLinks[0];
+    link.classList.toggle("is-current", current);
+    if (current) {
+      link.setAttribute("aria-current", "page");
+    } else {
+      link.removeAttribute("aria-current");
+    }
+  });
+}
+
+window.addEventListener("hashchange", updateCurrentNav);
+updateCurrentNav();
+
+menuToggle.addEventListener("click", () => {
+  const isOpen = mainNav.classList.toggle("is-open");
+  menuToggle.textContent = isOpen ? "메뉴 닫기" : "메뉴 열기";
+  menuToggle.setAttribute("aria-expanded", String(isOpen));
+});
+
+navLinks.forEach((link) => {
+  link.addEventListener("click", () => {
+    mainNav.classList.remove("is-open");
+    menuToggle.textContent = "메뉴 열기";
+    menuToggle.setAttribute("aria-expanded", "false");
+  });
+});
+
+const reviews = [
+  { title: "src/components/Button.tsx", complete: true, date: "2026-11-10" },
+  { title: "src/utils/auth.ts", complete: false, date: "2026-11-12" },
+  { title: "src/api/client.ts", complete: true, date: "2026-11-14" },
+];
+
+const filterButtons = document.querySelectorAll(".filter-button");
+const reviewList = document.querySelector("#review-list");
+const historyEmpty = document.querySelector("#history-empty");
+let currentFilter = "all";
+
+function getVisibleReviews() {
+  return reviews.filter((r) => {
+    if (currentFilter === "all") return true;
+    if (currentFilter === "complete") return r.complete;
+    return !r.complete;
+  });
+}
+
+function renderReviews() {
+  const visible = getVisibleReviews();
+  reviewList.replaceChildren();
+  historyEmpty.hidden = visible.length !== 0;
+  reviewList.hidden = visible.length === 0;
+  visible.forEach((r) => {
+    const card = document.createElement("div");
+    card.className = "review-card";
+    card.setAttribute("role", "listitem");
+    const badge = r.complete ? "is-complete" : "is-pending";
+    const label = r.complete ? "완료" : "대기중";
+    card.innerHTML = `<div class="review-card-header"><strong>${r.title}</strong><span class="review-badge ${badge}">${label}</span></div><p class="review-date">${r.date}</p>`;
+    reviewList.appendChild(card);
+  });
+}
+
+filterButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    currentFilter = button.dataset.filter;
+    filterButtons.forEach((item) => {
+      const selected = item === button;
+      item.classList.toggle("is-active", selected);
+      item.setAttribute("aria-pressed", String(selected));
+    });
+    renderReviews();
+  });
+});
+
+renderReviews();
+
 restartButton.addEventListener("click", () => {
   formData.repoName = "";
   formData.commitCount = "3";
