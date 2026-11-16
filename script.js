@@ -417,10 +417,18 @@ menuToggle.addEventListener("click", () => {
 });
 
 navLinks.forEach((link) => {
-  link.addEventListener("click", () => {
+  link.addEventListener("click", (event) => {
+    event.preventDefault();
+    const targetId = link.getAttribute("href");
     mainNav.classList.remove("is-open");
     menuToggle.textContent = "메뉴 열기";
     menuToggle.setAttribute("aria-expanded", "false");
+    requestAnimationFrame(() => {
+      const target = document.querySelector(targetId);
+      if (target) target.scrollIntoView();
+      history.pushState(null, "", targetId);
+      updateCurrentNav();
+    });
   });
 });
 
