@@ -730,10 +730,27 @@ body.dark .rating-result {
   font-weight: 700;
 }
 
+.filter-button:hover {
+  background: #f4f3ff;
+  color: #5b50c8;
+  border-color: #5b50c8;
+}
+
 .filter-button.is-active {
   border-color: #5b50c8;
   background: #5b50c8;
   color: #ffffff;
+}
+
+.filter-button.is-active:hover {
+  background: #4038a5;
+  border-color: #4038a5;
+}
+
+.menu-toggle:hover {
+  background: #f4f3ff;
+  color: #292a31;
+  border-color: #5b50c8;
 }
 
 /* 10주차 · 리뷰 이력 카드 */
